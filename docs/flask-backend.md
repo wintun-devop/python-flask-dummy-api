@@ -1,6 +1,13 @@
+## Project init
+```
+mkdir flask-apis
+```
+```
+cd flask-apis
+```
 ## virtial environment set-up
 ```
-python -m venv backend-env
+python -m venv flask-apis-env
 ```
 ## env installation
 ```
