@@ -9,6 +9,10 @@ cd flask-apis
 ```
 python -m venv flask-apis-env
 ```
+### Activate env(for window)
+```
+flask-apis-env\Scripts\activate
+```
 ## env installation
 ```
 pip install python-dotenv
