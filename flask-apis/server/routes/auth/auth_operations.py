@@ -43,12 +43,14 @@ def login_user():
             token_attributes={"id":check_exist.id,"name":check_exist.name,"email":check_exist.email}
             access_token = create_access_token(identity=token_attributes,fresh=True)
             refresh_token = create_refresh_token(identity=token_attributes)
+            print(access_token)
             response=jsonify({**token_attributes,"access_token": access_token,"refresh_token": refresh_token,"authenticated":True})
-            
             # optional cookies usage
-            set_access_cookies(response,access_token)
-            set_refresh_cookies(response,refresh_token) 
-           
+            # a = jsonify()
+            # set_access_cookies(response, access_token)
+            # set_refresh_cookies(response, refresh_token)
+            # set_access_cookies(response=response,encoded_access_token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNzMyNTQwNjMyLCJqdGkiOiI5N2U2NjE0ZS04NDY1LTRmMzYtYjFjNC1lNzgwNzk4MDU0MzgiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjp7ImlkIjoiNWQxNzhkOTktNGI5MC00M2RiLTg5NTktMmZkZjk2NjYwODAwIiwibmFtZSI6IldpbnR1biIsImVtYWlsIjoid2ludHVuMTAxQGdtYWlsLmNvbSJ9LCJuYmYiOjE3MzI1NDA2MzIsImNzcmYiOiIzNDRlYjdlOS1kYzk5LTQwNWUtYTdlNi02ZWYzY2YxYjljODIiLCJleHAiOjE3MzI1NzY2MzJ9.hwic1OfD9H-28CNaJLz3PI5ozh6MPmaYxk6Kd1NLsTc")
+            # set_refresh_cookies(jsonify({"login":True}),"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNzMyNTQwNzkwLCJqdGkiOiIyZWFlMmRmMi1hMDdmLTRhNzktOWVjMS04YzgyNWEyNzQ0ZWEiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjp7ImlkIjoiNWQxNzhkOTktNGI5MC00M2RiLTg5NTktMmZkZjk2NjYwODAwIiwibmFtZSI6IldpbnR1biIsImVtYWlsIjoid2ludHVuMTAxQGdtYWlsLmNvbSJ9LCJuYmYiOjE3MzI1NDA3OTAsImNzcmYiOiIxOWI1NzU2Ny0wN2U4LTQ1ZTItYWE3ZS0wNTMxYmI3ODRlNmMiLCJleHAiOjE3MzI1NzY3OTB9.ytJm45vtcodc_95lxuYemsv3u2pHtwMoDFWoEU6Ybj0") 
             return (response,200)
         else:
             return make_response(jsonify({'status':'fail','msg':'email or password incorrect.'}),400)

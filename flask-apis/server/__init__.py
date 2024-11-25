@@ -23,11 +23,14 @@ def create_app():
     #configure cors
     CORS(app, resources={r"/*": {"origins": "*"}})
      #configure jwt
-    app.config['JWT_SECRET_KEY'] = server_config.JWT_SECRET_KEY
+    app.config['JWT_SECRET_KEY'] = server_config.JWT_SECRET_KEY              
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=10)  # Adjust as needed
     app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)  # Adjust as needed
-    app.config['JWT_CSRF_IN_COOKIES']=True
     app.config['JWT_REFRESH_TOKEN_ENABLED'] = True
+    app.config['JWT_COOKIE_CSRF_PROTECT'] = True
+    app.config['JWT_COOKIE_SECURE']=True
+    # app.config['JWT_ACCESS_CSRF_HEADER_NAME'] = "X-CSRF-TOKEN-ACCESS"
+    # app.config['JWT_REFRESH_CSRF_HEADER_NAME'] = "X-CSRF-TOKEN-REFRESH"
     JWTManager(app)
     #database config
     app.config['SQLALCHEMY_DATABASE_URI'] = server_config.DATABASE_LINK
