@@ -10,5 +10,5 @@ class Users(db.Model):
     customId=db.Column(db.String(255), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(), nullable=False)
-    createdAt = db.Column(db.DateTime,default=datetime.timezone.utc)
-    updateAt = db.Column(db.DateTime,onupdate=datetime.timezone.utc)
+    createdAt = db.Column(db.DateTime,default=datetime.datetime.utcnow())
+    updateAt = db.Column(db.DateTime,onupdate=datetime.datetime.utcnow())
