@@ -46,12 +46,10 @@ def login_user():
             print(access_token)
             response=jsonify({**token_attributes,"access_token": access_token,"refresh_token": refresh_token,"authenticated":True})
             # optional cookies usage
-            # a = jsonify()
-            # set_access_cookies(response, access_token)
-            # set_refresh_cookies(response, refresh_token)
-            # set_access_cookies(response=response,encoded_access_token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNzMyNTQwNjMyLCJqdGkiOiI5N2U2NjE0ZS04NDY1LTRmMzYtYjFjNC1lNzgwNzk4MDU0MzgiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjp7ImlkIjoiNWQxNzhkOTktNGI5MC00M2RiLTg5NTktMmZkZjk2NjYwODAwIiwibmFtZSI6IldpbnR1biIsImVtYWlsIjoid2ludHVuMTAxQGdtYWlsLmNvbSJ9LCJuYmYiOjE3MzI1NDA2MzIsImNzcmYiOiIzNDRlYjdlOS1kYzk5LTQwNWUtYTdlNi02ZWYzY2YxYjljODIiLCJleHAiOjE3MzI1NzY2MzJ9.hwic1OfD9H-28CNaJLz3PI5ozh6MPmaYxk6Kd1NLsTc")
-            # set_refresh_cookies(jsonify({"login":True}),"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNzMyNTQwNzkwLCJqdGkiOiIyZWFlMmRmMi1hMDdmLTRhNzktOWVjMS04YzgyNWEyNzQ0ZWEiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjp7ImlkIjoiNWQxNzhkOTktNGI5MC00M2RiLTg5NTktMmZkZjk2NjYwODAwIiwibmFtZSI6IldpbnR1biIsImVtYWlsIjoid2ludHVuMTAxQGdtYWlsLmNvbSJ9LCJuYmYiOjE3MzI1NDA3OTAsImNzcmYiOiIxOWI1NzU2Ny0wN2U4LTQ1ZTItYWE3ZS0wNTMxYmI3ODRlNmMiLCJleHAiOjE3MzI1NzY3OTB9.ytJm45vtcodc_95lxuYemsv3u2pHtwMoDFWoEU6Ybj0") 
+            set_access_cookies(response, access_token)
+            set_refresh_cookies(response, refresh_token)
             return (response,200)
+        
         else:
             return make_response(jsonify({'status':'fail','msg':'email or password incorrect.'}),400)
     except exc.SQLAlchemyError as e:
@@ -61,19 +59,18 @@ def login_user():
 
 #refresh token 
 auth_refresh_bp = Blueprint('auth_refresh', __name__,url_prefix=REFRESH_TOKEN)
-@auth_refresh_bp.route('/', methods=['GET'])
+@auth_refresh_bp.route('/', methods=['POST'])
 @jwt_required(refresh=True)  #Require a valid refresh token for this route
 def refresh():
-    print("refresh")
     # Set the JWT access cookie in the response
     try:
         current_user = get_jwt_identity()
-        print("referse attribute",current_user)
+        # print("referse attribute",current_user)
         access_token = create_access_token(identity=current_user,fresh=False)
         refresh_token = create_refresh_token(identity=current_user)
         respone = jsonify({'refresh': True,'access_token':access_token,'refresh_token':refresh_token,**current_user})
-        """ set_access_cookies(respone, access_token.encode('utf-8'))
-        set_refresh_cookies(respone,refresh_token.encode('utf-8')) """
+        set_access_cookies(respone, access_token)
+        set_refresh_cookies(respone,refresh_token)
         return make_response(respone, 200)
     except:
         return make_response(jsonify({"status":"Login expired!","msg":"Login Again!"}),400)
@@ -83,6 +80,6 @@ auth_logout_bp = Blueprint('auth_logout', __name__,url_prefix=USER_LOGOUT)
 @auth_logout_bp.route('/', methods=['DELETE'])
 @jwt_required()  #Require a valid access token for this route
 def logout():
-    respone = jsonify({'logout': True})
-    # unset_jwt_cookies(respone)
+    respone = jsonify({"authenticated": False})
+    unset_jwt_cookies(respone)
     return respone, 200
