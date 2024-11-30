@@ -15,8 +15,8 @@ from server import bcrypt
 #import database and model from models
 from server.models import db,Users
 #error handling
-from sqlalchemy import exc
-import json
+from sqlalchemy import exc,or_
+
 
 from server.resources.apis import USER_LOGIN
 from server.resources.apis import REFRESH_TOKEN
@@ -28,33 +28,43 @@ auth_login_bp = Blueprint('auth_login', __name__,url_prefix=USER_LOGIN)
 def login_user():
     req_body = request.get_json()
     try:
-        user_email = req_body['user_email']
+        user_email = req_body['user_name']
         user_password = req_body['user_password']
-        check_exist=Users.query.filter_by(email=user_email).first()
-        # print("check email exist",check_exist)
-        if check_exist is None:
-            return make_response(jsonify({'status':'fail','msg':'email or password incorrect.'}),400)
-        hash_password = check_exist.password
-        # print("hash_password",hash_password)
-        isPasswordCorrect = bcrypt.check_password_hash(hash_password,user_password)
-        print("passwordCorrect",isPasswordCorrect)
-        if isPasswordCorrect:
-            # create the jwt and go make response
-            token_attributes={"id":check_exist.id,"name":check_exist.name,"email":check_exist.email}
-            access_token = create_access_token(identity=token_attributes,fresh=True)
-            refresh_token = create_refresh_token(identity=token_attributes)
-            print(access_token)
-            response=jsonify({**token_attributes,"access_token": access_token,"refresh_token": refresh_token,"authenticated":True})
-            # optional cookies usage
-            set_access_cookies(response, access_token)
-            set_refresh_cookies(response, refresh_token)
-            return (response,200)
-        
+        check_email_exist=Users.query.filter_by(email=user_email).first()
+        if check_email_exist is not None:
+            hash_password = check_email_exist.password
+            isPasswordCorrect = bcrypt.check_password_hash(hash_password,user_password)
+            # print("passwordCorrect email",isPasswordCorrect)
+            if isPasswordCorrect:
+                # create the jwt and go make response
+                token_attributes={"id":check_email_exist.id,"name":check_email_exist.name,"email":check_email_exist.email}
+                access_token = create_access_token(identity=token_attributes,fresh=True)
+                refresh_token = create_refresh_token(identity=token_attributes)
+                response=jsonify({**token_attributes,"access_token": access_token,"refresh_token": refresh_token,"authenticated":True})
+                # optional cookies usage
+                set_access_cookies(response, access_token)
+                set_refresh_cookies(response, refresh_token)
+                return (response,200)
+        check_id_exist=Users.query.filter_by(customId=user_email).first()
+        if check_id_exist is not None:
+            hash_password = check_id_exist.password
+            isPasswordCorrect = bcrypt.check_password_hash(hash_password,user_password)
+            # print("passwordCorrect id",isPasswordCorrect)
+            if isPasswordCorrect:
+                # create the jwt and go make response
+                token_attributes={"id":check_id_exist.id,"name":check_id_exist.name,"email":check_id_exist.email}
+                access_token = create_access_token(identity=token_attributes,fresh=True)
+                refresh_token = create_refresh_token(identity=token_attributes)
+                response=jsonify({**token_attributes,"access_token": access_token,"refresh_token": refresh_token,"authenticated":True})
+                # optional cookies usage
+                set_access_cookies(response, access_token)
+                set_refresh_cookies(response, refresh_token)
+                return (response,200)
         else:
-            return make_response(jsonify({'status':'fail','msg':'email or password incorrect.'}),400)
+            return make_response(jsonify({'status':'error','msg':'user id or password incorrect.'}),400)
     except exc.SQLAlchemyError as e:
         print("error",e)
-        return make_response(jsonify({"status":"failed","msg":"Internal Server Error"}),500)
+        return make_response(jsonify({"status":"error","msg":"Internal Server Error"}),500)
 
 
 #refresh token 

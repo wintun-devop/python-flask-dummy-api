@@ -15,7 +15,9 @@ app.register_blueprint(auth_test_bp)
 app.register_blueprint(user_register_bp)
 app.register_blueprint(auth_login_bp)
 app.register_blueprint(auth_refresh_bp)
-app.register_blueprint(auth_logout_bp)
+app.register_blueprint(auth_logout_bp) 
+
+
 
 if __name__ == "__main__":
     #add host as 0.0.0.0 to be accessible from outside when running as a #container
