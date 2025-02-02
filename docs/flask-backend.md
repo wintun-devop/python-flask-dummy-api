@@ -44,3 +44,9 @@ pip install flask-bcrypt
 ## deploy
 1) pip install -r requirements.txt
 2) gunicorn --bind 0.0.0.0:5000 wsgi:app
+
+
+## Open SSL Key Generate
+```
+openssl rand -base64 32
+```
