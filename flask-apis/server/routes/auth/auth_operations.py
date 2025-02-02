@@ -28,8 +28,8 @@ auth_login_bp = Blueprint('auth_login', __name__,url_prefix=USER_LOGIN)
 def login_user():
     req_body = request.get_json()
     try:
-        user_email = req_body['user_name']
-        user_password = req_body['user_password']
+        user_email = req_body['username']
+        user_password = req_body['password']
         check_email_exist=Users.query.filter_by(email=user_email).first()
         if check_email_exist is not None:
             hash_password = check_email_exist.password
@@ -37,7 +37,7 @@ def login_user():
             # print("passwordCorrect email",isPasswordCorrect)
             if isPasswordCorrect:
                 # create the jwt and go make response
-                token_attributes={"id":check_email_exist.id,"name":check_email_exist.name,"email":check_email_exist.email}
+                token_attributes={"id":check_email_exist.id,"username":check_email_exist.username,"email":check_email_exist.email}
                 access_token = create_access_token(identity=token_attributes,fresh=True)
                 refresh_token = create_refresh_token(identity=token_attributes)
                 response=jsonify({**token_attributes,"access_token": access_token,"refresh_token": refresh_token,"authenticated":True})
@@ -45,14 +45,14 @@ def login_user():
                 set_access_cookies(response, access_token)
                 set_refresh_cookies(response, refresh_token)
                 return (response,200)
-        check_id_exist=Users.query.filter_by(customId=user_email).first()
+        check_id_exist=Users.query.filter_by(username=user_email).first()
         if check_id_exist is not None:
             hash_password = check_id_exist.password
             isPasswordCorrect = bcrypt.check_password_hash(hash_password,user_password)
             # print("passwordCorrect id",isPasswordCorrect)
             if isPasswordCorrect:
                 # create the jwt and go make response
-                token_attributes={"id":check_id_exist.id,"name":check_id_exist.name,"email":check_id_exist.email}
+                token_attributes={"id":check_id_exist.id,"username":check_id_exist.username,"email":check_id_exist.email}
                 access_token = create_access_token(identity=token_attributes,fresh=True)
                 refresh_token = create_refresh_token(identity=token_attributes)
                 response=jsonify({**token_attributes,"access_token": access_token,"refresh_token": refresh_token,"authenticated":True})
