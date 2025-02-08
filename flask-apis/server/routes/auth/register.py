@@ -4,7 +4,7 @@ from server.resources.apis import USER_REGISER
 from server import bcrypt
 #import database and model from models
 from server.models import db,Users
-
+from server.utils.helper import uuid_string
 
 #error handling
 from sqlalchemy import exc
@@ -29,7 +29,7 @@ def register_user():
         hash_password = bcrypt.generate_password_hash(user_password).decode('utf-8')
         # insert
         print(hash_password)
-        new_user = Users(username=user_name,email=user_email,password=hash_password)
+        new_user = Users(id=uuid_string(),username=user_name,email=user_email,password=hash_password)
         db.session.add(new_user)
         db.session.commit()
         user=Users.query.filter_by(email=user_email).first() 
