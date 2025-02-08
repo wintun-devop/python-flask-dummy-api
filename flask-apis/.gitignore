@@ -53,3 +53,6 @@ __pycache__/
 *.sw?
 
 *env
+
+#migration ignore
+/migrations
