@@ -55,4 +55,3 @@ __pycache__/
 *env
 
 #migration ignore
-/migrations
