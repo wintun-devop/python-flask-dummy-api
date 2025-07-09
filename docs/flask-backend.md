@@ -29,6 +29,10 @@ pip install gunicorn psycopg2 psycopg2-binary
 ```
 pip install flask-bcrypt
 ```
+### Pythone Env Package
+```
+pip install python-dotenv
+```
 
 
 ## create api setp-by-set
