@@ -52,6 +52,5 @@ __pycache__/
 *.sln
 *.sw?
 
-*env
 
 #migration ignore
